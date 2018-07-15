@@ -14,40 +14,43 @@ pipeline {
         		}
 		}
 
-        dir(project_path) {
+        
 
         	stage('compile,test and package') {
         		steps {
-            		sh 'mvn clean package'
-            	}
+				dir(project_path) {
+            				sh 'mvn clean package'
+				}
+            		}
         	}
 
         	stage('archival') {
         		steps {
-            	 	archiveArtifacts 'target/*.jar'
-            	}
+				dir(project_path) {
+            	 			archiveArtifacts 'target/*.jar'
+            			}
+			}
         	}
 
         	stage('unit test') {
         		steps {
-            		junit 'target/surefire-reports/*.xml'
-            	}
+				dir(project_path) {
+		            		junit 'target/surefire-reports/*.xml'
+            			}
+			}
         	}
-        }
-
-    }
-
-    post { 
-        always { 
-            notify ('NOTIFY')
-        }
-        fail { 
-        	notify ('FAIL')
-        }
-        success {
-        	notify ('SUCCESS')
-        }
-    }
+	}
+	post { 
+        	always { 
+            		notify ('NOTIFY')
+        	}
+        	failure { 
+        		notify ('FAIL')
+        	}
+        	success {
+        		notify ('SUCCESS')
+        	}
+    	}
 }
 def notify(status){
     emailext (
