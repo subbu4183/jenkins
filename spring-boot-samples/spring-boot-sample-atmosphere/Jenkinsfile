@@ -1,35 +1,58 @@
-node {
-    
-    notify ('START')
-    stage('checkout') {
-        git 'https://github.com/akmaharshi/jenkins.git'
+pipeline {
+	
+	agent any
+
+	environment {
+		project_path = "spring-boot-samples/spring-boot-sample-atmosphere"
+	}
+
+	stages {
+
+		stage('checkout') {
+        	git 'https://github.com/akmaharshi/jenkins.git'
+        }
+
+        dir(project_path) {
+
+        	stage('compile,test and package') {
+        		steps {
+            		sh 'mvn clean package'
+            	}
+        	}
+
+        	stage('archival') {
+        		steps {
+            	 	archiveArtifacts 'target/*.jar'
+            	}
+        	}
+
+        	stage('unit test') {
+        		steps {
+            		junit 'target/surefire-reports/*.xml'
+            	}
+        	}
+        }
+
     }
 
-    def project_path = "spring-boot-samples/spring-boot-sample-atmosphere"
-
-    dir(project_path) {
-        stage('compile,test and package') {
-            sh 'mvn clean package'
+    post { 
+        always { 
+            notify ('NOTIFY')
         }
-    
-        stage('archival') {
-            archiveArtifacts 'target/*.jar'
+        fail { 
+        	notify ('FAIL')
         }
-
-        stage('unit test') {
-            junit 'target/surefire-reports/*.xml'
-
+        success {
+        	notify ('SUCCESS')
         }
     }
-}
 
-def notify(status){
+    def notify(status){
     emailext (
       to: "anil.maharshi@gmail.com",
       subject: "${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-        <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
-    )
+        <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} 	[${env.BUILD_NUMBER}]</a></p>""",
+    	)
+	}
 }
-
-
