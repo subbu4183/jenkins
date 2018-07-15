@@ -9,8 +9,10 @@ pipeline {
 	stages {
 
 		stage('checkout') {
-        	git 'https://github.com/akmaharshi/jenkins.git'
-        }
+			steps {
+        			git 'https://github.com/akmaharshi/jenkins.git'
+        		}
+		}
 
         dir(project_path) {
 
