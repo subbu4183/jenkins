@@ -7,15 +7,6 @@ pipeline {
 	}
 
 	stages {
-
-		stage('checkout') {
-			steps {
-        			git 'https://github.com/akmaharshi/jenkins.git'
-        		}
-		}
-
-        
-
         	stage('compile,test and package') {
         		steps {
 				dir(project_path) {
