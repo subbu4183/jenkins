@@ -68,7 +68,7 @@ public class SampleAtmosphereApplicationTests {
 		context.close();
 		assertThat(count).isEqualTo(0L);
 		assertThat(messagePayloadReference.get())
-				.contains("{\"message\":\"test\",\"author\":\"test\",\"time\":");
+				.contains("{\"message\":\"test\",\"author\":\"test\",\"date\":");
 	}
 
 	@Configuration
@@ -87,7 +87,7 @@ public class SampleAtmosphereApplicationTests {
 			if (this.latch.await(10, TimeUnit.SECONDS)) {
 				logger.info("Got response: " + this.messagePayload.get());
 			}
-			else {
+		else {
 				logger.info("Response not received: latch=" + this.latch.getCount());
 			}
 		}
